@@ -1,25 +1,7 @@
-"use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import React from 'react'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -27,49 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { Button } from '@/components/ui/button';
+import UseMultiStep from '@/hooks/use-multi-step';
+import { Form } from 'react-hook-form';
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  lastName: z
-    .string()
-    .min(2, { message: "Last name must be at least 2 characters." }),
-  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  gender: z.string({ required_error: "Please select a gender." }).min(1, {message: "Gender is required."}),
-  passport: z
-    .string()
-    .min(6, { message: "Passport number must be at least 6 characters." }),
-});
-
+ 
 export default function MultiStepForm() {
-  const [step, setStep] = useState(1);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      lastName: "",
-      phone: "",
-      email: "",
-      gender: "",
-      passport: "",
-    },
-  });
+  const viewModel  = UseMultiStep()
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    // Here you would typically send the data to your backend
-    alert("Form submitted successfully!");
-  }
-
-
-  const handlePrevStep = () => {
-    if (step > 1) setStep(step - 1);
-  };
-
-  const handleNextStep = () => {
-    if (step < 3) setStep(step + 1);
-  };
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-gray-50">
@@ -77,16 +24,17 @@ export default function MultiStepForm() {
         <CardHeader>
           <CardTitle>Personal Information Form</CardTitle>
           <CardDescription>
-            Please fill in all the required information below.
+            Fill in the required information below.
           </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {step === 1 && (
+          <Form {...viewModel.form}>
+            <form onSubmit={viewModel.form.handleSubmit(viewModel.onSubmit)} className="space-y-6">
+              {viewModel.step === 1 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
-                    control={form.control}
+                    control={viewModel.form.control}
                     name="name"
                     render={({ field }) => (
                       <FormItem>
@@ -102,7 +50,7 @@ export default function MultiStepForm() {
                     )}
                   />
                   <FormField
-                    control={form.control}
+                    control={viewModel.form.control}
                     name="lastName"
                     render={({ field }) => (
                       <FormItem>
@@ -120,10 +68,10 @@ export default function MultiStepForm() {
                 </div>
               )}
 
-              {step === 2 && (
+              {viewModel.step === 2 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
-                    control={form.control}
+                    control={viewModel.form.control}
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
@@ -139,14 +87,14 @@ export default function MultiStepForm() {
                     )}
                   />
                   <FormField
-                    control={form.control}
+                    control={viewModel.form.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter your email address"
+                            placeholder="Enter your email"
                             type="email"
                             {...field}
                           />
@@ -158,10 +106,10 @@ export default function MultiStepForm() {
                 </div>
               )}
 
-              {step === 3 && (
+              {viewModel.step === 3 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
-                    control={form.control}
+                    control={viewModel.form.control}
                     name="gender"
                     render={({ field }) => (
                       <FormItem>
@@ -172,7 +120,7 @@ export default function MultiStepForm() {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select your gender" />
+                              <SelectValue placeholder="Select gender" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -189,14 +137,14 @@ export default function MultiStepForm() {
                     )}
                   />
                   <FormField
-                    control={form.control}
+                    control={viewModel.form.control}
                     name="passport"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Passport Number</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter your passport number"
+                            placeholder="Enter passport number"
                             {...field}
                           />
                         </FormControl>
@@ -208,15 +156,15 @@ export default function MultiStepForm() {
               )}
 
               <CardFooter className="gap-5 justify-end flex">
-                <Button type="button" onClick={handlePrevStep}>
+                <Button type="button" onClick={viewModel.handlePrevStep}>
                   Back
                 </Button>
-                {step < 3 && (
-                  <Button type="button" onClick={handleNextStep}>
+                {viewModel.step < 3 && (
+                  <Button type="button" onClick={viewModel.handleNextStep}>
                     Next
                   </Button>
                 )}
-                {step === 3 && <Button type="submit">Submit</Button>}
+                {viewModel.step === 3 && <Button type="submit">Submit</Button>}
               </CardFooter>
             </form>
           </Form>
