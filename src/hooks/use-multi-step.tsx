@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState, useMemo, useCallback } from "react";
+import { StepObjectType } from "@/app/_components/stepObject";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -18,6 +19,24 @@ const formSchema = z.object({
     .string()
     .min(6, { message: "Passport number must be at least 6 characters." }),
 });
+
+const stepObject: StepObjectType[] = [
+  {
+    id: 1,
+    title: "Personal iNformation",
+    description: "Enter your personal Information ",
+  },
+  {
+    id: 2,
+    title: "Account iNformation",
+    description: "Enter your account Information ",
+  },
+  {
+    id: 3,
+    title: "Passport Information",
+    description: "Enter your passport  Information ",
+  }
+];
 
 const UseMultiStep = () => {
   const [step, setStep] = useState(1);
@@ -57,7 +76,7 @@ const UseMultiStep = () => {
   // }
 
   return useMemo(
-    () => ({ step, form, onSubmit, handlePrevStep, handleNextStep }),
+    () => ({ step, form, onSubmit, handlePrevStep, handleNextStep, stepObject }),
     [step, form, onSubmit, handlePrevStep, handleNextStep]
   );
 };

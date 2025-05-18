@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import UseMultiStep from "@/hooks/use-multi-step";
-import StepObject from "./stepObject";
 
 // const formSchema = z.object({
 //   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -86,7 +85,6 @@ export default function MultiStepForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <StepObject data={viewModel.stepObject} step={viewModel.step} />
           <Form {...viewModel.form}>
             <form onSubmit={viewModel.form.handleSubmit(viewModel.onSubmit)} className="space-y-6">
               {viewModel.step === 1 && (
