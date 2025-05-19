@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FieldName, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState, useMemo, useCallback } from "react";
 import { StepObjectType } from "@/app/_components/stepObject";
@@ -25,17 +25,20 @@ const stepObject: StepObjectType[] = [
     id: 1,
     title: "Personal iNformation",
     description: "Enter your personal Information ",
+    fields: ["name", "lastName"],
   },
   {
     id: 2,
     title: "Account iNformation",
     description: "Enter your account Information ",
+    fields: ["phone", "email"],
   },
   {
     id: 3,
     title: "Passport Information",
     description: "Enter your passport  Information ",
-  }
+    fields: ["gender", "passport"],
+  },
 ];
 
 const UseMultiStep = () => {
@@ -62,9 +65,18 @@ const UseMultiStep = () => {
     if (step > 1) setStep(step - 1);
   }, [step]);
 
-  const handleNextStep = useCallback(() => {
-    if (step < 3) setStep(step + 1);
-  }, [step]);
+  const handleNextStep = useCallback(async () => {
+    const fields = stepObject[step - 1].fields;
+    const validateFields = await form.trigger(
+      fields as FieldName<z.infer<typeof formSchema>>[]
+    );
+
+    // if (!validateFields) return
+
+    if (step < 3 && validateFields) {
+      setStep(step + 1);
+    }
+  }, [step, form]);
 
   // return {
   //     step,
@@ -76,7 +88,14 @@ const UseMultiStep = () => {
   // }
 
   return useMemo(
-    () => ({ step, form, onSubmit, handlePrevStep, handleNextStep, stepObject }),
+    () => ({
+      step,
+      form,
+      onSubmit,
+      handlePrevStep,
+      handleNextStep,
+      stepObject,
+    }),
     [step, form, onSubmit, handlePrevStep, handleNextStep]
   );
 };

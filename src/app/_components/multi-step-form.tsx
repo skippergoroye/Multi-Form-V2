@@ -175,6 +175,7 @@ export default function MultiStepForm() {
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
+                         
                         >
                           <FormControl>
                             <SelectTrigger>
